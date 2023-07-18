@@ -1,4 +1,4 @@
-require('dotenv').config();
+require("dotenv").config();
 const express = require("express");
 const app = express();
 // const port = process.env.PORT || 3000;
@@ -6,7 +6,7 @@ const port = process.env.PORT;
 app.use(express.urlencoded({ extended: true }));
 
 // Database Connection setup
-const db = require("./db/conn");
+require("./db/conn");
 
 // Bcrypting
 const bcrypt = require("bcryptjs");
@@ -16,7 +16,6 @@ const faculty = require("./models/faculty");
 const student = require("./models/student");
 const subject = require("./models/subject");
 const attendance = require("./models/attendance");
-
 
 // Hbs Or Partials Connection
 const path = require("path");
@@ -122,15 +121,15 @@ app.post("/login", async (req, res) => {
             _id: id,
             docs: arr,
           });
-         } else {
+        } else {
           res.render("index");
         }
       } else {
         res.render("index");
+      }
     }
-  } 
-    }//try ka bracket
-    catch (error) {
+  } catch (error) {
+    //try ka bracket
     console.log(error);
     // res.status(401).send("Invalid Cardentials: ", err);
   }
@@ -486,7 +485,6 @@ app.get("/student/del/:id", async (req, res) => {
     const sid = req.params.id;
     await student.findByIdAndDelete({ _id: sid });
     res.send('<script>alert("Delete Successfully")</script>');
-   
   } catch (error) {
     console.log(error);
     res.status(404).render("404");
@@ -586,7 +584,6 @@ app.post("/addsubject/:id", async (req, res) => {
       faculty: id,
     });
 
-     
     await data.save();
     res.send("<script>alert('Add Successfully')</script>");
   } catch (error) {
@@ -645,7 +642,7 @@ app.get("/status_check/:id/:branch/:semester", async (req, res) => {
   }
 });
 
-// View 
+// View
 app.post("/view/:id/:branch/:semester", async (req, res) => {
   try {
     const date = req.body.date;
@@ -658,10 +655,9 @@ app.post("/view/:id/:branch/:semester", async (req, res) => {
         date: date,
       });
       if (data) {
-        const result = await student.find(
-          { id: data.present },
-          { id: 1, name: 1 }
-        ).sort({name:1});
+        const result = await student
+          .find({ id: data.present }, { id: 1, name: 1 })
+          .sort({ name: 1 });
         res.status(200).render("viewAttendance", {
           docs: result,
           status: "Present",
@@ -677,10 +673,12 @@ app.post("/view/:id/:branch/:semester", async (req, res) => {
       });
       if (data) {
         const pStudent = data.present;
-        const result = await student.find(
-          { id: { $nin: pStudent }, branch: branch, semester: semester },
-          { id: 1, name: 1 }
-        ).sort({name:1});
+        const result = await student
+          .find(
+            { id: { $nin: pStudent }, branch: branch, semester: semester },
+            { id: 1, name: 1 }
+          )
+          .sort({ name: 1 });
         res.status(200).render("viewAttendance", {
           docs: result,
           status: "Absent",
